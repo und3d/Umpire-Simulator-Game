@@ -1,0 +1,26 @@
+Game Flow: Pitch -> Player calls ball or strike -> Next pitch.
+
+Gamemodes:
+
+1. Practice Mode:
+    - No lives, no score, just endless practice 
+
+2. Lives Mode:
+    - Three lives, infinite pitches
+    - Player loses a life if call is wrong
+    - Goal is to get as many calls correct before losing all lives.
+
+3. Levels (Main Mode):
+    - Each level has certain number of pitches.
+    - Each level has a correct call target.
+    - Player must get specified number of calls correct before they run out of pitches to beat the level.
+    - Levels start easy and get more difficult.
+    - Pitch distance and speed increase sort of like reaching different zones/worlds in mobile games.
+    - Example Level 1 (Little League Field):
+        - 1 Pitch, 100% Accuracy Goal.
+    - Example Level 2 (Little League Field):
+        - 3 Pitches, 66% Accuracy Goal.
+    - Example Level 3 (Little League Field):
+        - 3 Pitches, 100% Accuracy Goal.
+    - Example Level 11 (High School):
+        - 20 Pitches, 80% Accuracy Goal.

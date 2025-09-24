@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04c1e202944c1db4a9a8a1179d4d37fd, type: 3}
+  m_Name: LevelDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDatabase
+  levelContainer:
+  - level: 1
+    pitchAmount: 6
+    correctForOneStar: 3
+    correctForTwoStars: 5
+    correctForThreeStars: 6
+  - level: 2
+    pitchAmount: 8
+    correctForOneStar: 5
+    correctForTwoStars: 7
+    correctForThreeStars: 8
+  - level: 3
+    pitchAmount: 10
+    correctForOneStar: 7
+    correctForTwoStars: 9
+    correctForThreeStars: 10
+  - level: 4
+    pitchAmount: 12
+    correctForOneStar: 9
+    correctForTwoStars: 11
+    correctForThreeStars: 12
+  - level: 5
+    pitchAmount: 14
+    correctForOneStar: 11
+    correctForTwoStars: 13
+    correctForThreeStars: 14
+  - level: 6
+    pitchAmount: 16
+    correctForOneStar: 13
+    correctForTwoStars: 15
+    correctForThreeStars: 16
+  - level: 7
+    pitchAmount: 18
+    correctForOneStar: 15
+    correctForTwoStars: 17
+    correctForThreeStars: 18
+  - level: 8
+    pitchAmount: 22
+    correctForOneStar: 19
+    correctForTwoStars: 21
+    correctForThreeStars: 22
+  - level: 9
+    pitchAmount: 26
+    correctForOneStar: 23
+    correctForTwoStars: 25
+    correctForThreeStars: 26
+  - level: 10
+    pitchAmount: 30
+    correctForOneStar: 27
+    correctForTwoStars: 29
+    correctForThreeStars: 30
