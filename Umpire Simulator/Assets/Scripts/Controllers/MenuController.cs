@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -14,11 +15,12 @@ public class MenuController : MonoBehaviour
     [SerializeField] private CanvasGroup controlsMenu;
 
     [SerializeField] private List<Button> levelSelectButtons;
+    [SerializeField] TMP_Text highscoreTextMenu;
     
     private void Awake()
     {
         GoToMainMenu();
-        LevelLoader.Instance.SetLevelReferences(levelSelectButtons);
+        LevelLoader.Instance.SetLevelReferences(levelSelectButtons, highscoreTextMenu);
         LevelLoader.Instance.LoadLevelMenu();
     }
 

@@ -28,12 +28,14 @@ public class UIController : MonoBehaviour
     [Header("Game Over UI")]
     [SerializeField] private TMP_Text winStatusText;
     [SerializeField] private TMP_Text correctCallsTextGameOver;
+    [SerializeField] private TMP_Text highscoreCorrectCallsText;
     [SerializeField] private Image firstStar;
     [SerializeField] private Image secondStar;
     [SerializeField] private Image thirdStar;
     [SerializeField] private TMP_Text callsNeededForOneStarText;
     [SerializeField] private TMP_Text callsNeededForTwoStarsText;
     [SerializeField] private TMP_Text callsNeededForThreeStarsText;
+    [SerializeField] private Button nextLevelButton;
 
     [Header("Last Pitch References")] 
     [SerializeField] private Button lastPitchButton;
@@ -55,6 +57,9 @@ public class UIController : MonoBehaviour
         DisableViews();
         
         ShowGameView();
+        
+        if (nextLevelButton)
+            DisableNextLevelButton();
         
         pauseAction = InputSystem.actions.FindAction("Pause");
         continueAction = InputSystem.actions.FindAction("Continue");
@@ -201,8 +206,17 @@ public class UIController : MonoBehaviour
         correctCallsTextPractice.text = $"Correct: {correctCalls}";
         correctCallsTextEndless.text = $"Correct: {correctCalls}";
         if (correctCallsTextGameOver)
-            correctCallsTextGameOver.text = $"Correct Calls: {correctCalls}";
+            correctCallsTextGameOver.text = $"Correct Calls:\n{correctCalls}";
+
+        if (!highscoreCorrectCallsText) 
+            return;
         
+        if (correctCalls > LevelLoader.Instance.highscore)
+        {
+            LevelLoader.Instance.highscore = correctCalls;
+        }
+        highscoreCorrectCallsText.text = $"Highest Correct Calls:\n{LevelLoader.Instance.highscore}";
+
     }
 
     public void UpdateRemainingPitches(int remainingPitches)
@@ -237,21 +251,25 @@ public class UIController : MonoBehaviour
         switch (starCount)
         {
             case 0:
+                DisableNextLevelButton();
                 firstStar.enabled = false;
                 secondStar.enabled = false;
                 thirdStar.enabled = false;
                 break;
             case 1:
+                EnableNextLevelButton();
                 firstStar.enabled = true;
                 secondStar.enabled = false;
                 thirdStar.enabled = false;
                 break;
             case 2:
+                EnableNextLevelButton();
                 firstStar.enabled = true;
                 secondStar.enabled = true;
                 thirdStar.enabled = false;
                 break;
             case 3:
+                EnableNextLevelButton();
                 firstStar.enabled = true;
                 secondStar.enabled = true;
                 thirdStar.enabled = true;
@@ -269,6 +287,16 @@ public class UIController : MonoBehaviour
         }
         ShowGameOverView();
         Time.timeScale = 0;
+    }
+
+    private void EnableNextLevelButton()
+    {
+        nextLevelButton.interactable = true;
+    }
+
+    private void DisableNextLevelButton()
+    {
+        nextLevelButton.interactable = false;
     }
 
     public void ShowLastPitchLocation()

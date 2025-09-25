@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -23,10 +24,13 @@ public sealed class LevelLoader : MonoBehaviour
     private int levelcorrectForTwoStars = -1;
     private int levelcorrectForThreeStars = -1;
 
+    public int highscore;
+
     [SerializeField] private List<bool> defaultLevelsUnlocked = new List<bool>(10);
     
     [SerializeField] private List<Button> levels = new List<Button>();
     [SerializeField] private List<bool> levelsUnlocked = new List<bool>();
+    [SerializeField] private TMP_Text highscoreText;
 
     // Clears static state when Play Mode starts with Domain Reload disabled (Editor only)
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -52,10 +56,11 @@ public sealed class LevelLoader : MonoBehaviour
                 // Fall through to create new SaveData
             }
         }
-        if (data == null) data = new SaveData();
+        data ??= new SaveData();
         
         // Copy this component's data to the save
         data.levelsUnlockedData = new List<bool>(levelsUnlocked ?? new List<bool>());
+        data.highscore = highscore;
         
         // Write to file
         var json = JsonUtility.ToJson(data, true);
@@ -68,6 +73,7 @@ public sealed class LevelLoader : MonoBehaviour
         if (!File.Exists(SavePath))
         {
             levelsUnlocked = defaultLevelsUnlocked;
+            highscore = 0;
             return;
         }
 
@@ -78,6 +84,7 @@ public sealed class LevelLoader : MonoBehaviour
             levelsUnlocked = (data?.levelsUnlockedData != null)
                 ? new List<bool>(data.levelsUnlockedData)
                 : defaultLevelsUnlocked;
+            highscore = data?.highscore ?? 0;
         }
         catch
         {
@@ -107,6 +114,7 @@ public sealed class LevelLoader : MonoBehaviour
             };
             levelIndex++;
         }
+        highscoreText.text = $"Highscore: {highscore}";
     }
 
     public void SetLevel(int level, int pitchAmount, int correctForOneStar, int correctForTwoStars,
@@ -134,9 +142,11 @@ public sealed class LevelLoader : MonoBehaviour
         levelsUnlocked[level] = true;
     }
 
-    public void SetLevelReferences(List<Button> levelSelectButtons)
+    public void SetLevelReferences(List<Button> levelSelectButtons, TMP_Text highscoreTextMenu)
     {
         levels = levelSelectButtons;
+        highscoreText = highscoreTextMenu;
+        
     }
 
     private void OnApplicationQuit()
@@ -184,4 +194,5 @@ public sealed class LevelLoader : MonoBehaviour
 public class SaveData
 {
     public List<bool> levelsUnlockedData = new List<bool>();
+    public int highscore;
 }

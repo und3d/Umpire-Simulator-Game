@@ -299,10 +299,10 @@ public class GameController : MonoBehaviour
 
     public GameObject ShowLastPitchLocation()
     {
-        return CreateBallAtLocation(pitchLocationToShow, 0, IsStrike(pitchLocationToShow));
+        return CreateBallAtLocation(pitchLocationToShow, IsStrike(pitchLocationToShow));
     }
 
-    private GameObject CreateBallAtLocation(Vector3 location, int pitchNumber, bool isStrike)
+    private GameObject CreateBallAtLocation(Vector3 location, bool isStrike)
     {
         var ball = Instantiate(ballPrefab, location, Quaternion.identity);
         ball.GetComponentInChildren<Renderer>().material.color = isStrike ? Color.indianRed : Color.cadetBlue;
@@ -382,12 +382,6 @@ public class GameController : MonoBehaviour
     {
         return Random.Range(pitchSpeedLower, pitchSpeedUpper);
     }
-
-    private float BiasedDistance(float max, float power)
-    {
-        var u = Random.value;
-        return Mathf.Pow(u, power) * Mathf.Max(0f, max);
-    }
     
     private bool IsStrike(Vector3 contactPoint)
     {
@@ -461,8 +455,8 @@ public class GameController : MonoBehaviour
         var extraY = 0.005f;
         var extraZ = 0.005f;
         
-        var clearanceY = anyPartCounts ? (ballRadius + extraY) : 0f;
-        var clearanceZ = anyPartCounts ? (ballRadius + extraZ) : 0f;
+        var clearanceY = (ballRadius + extraY);
+        var clearanceZ = (ballRadius + extraZ);
         
         // Overall clamp region using the WILD caps
         var yMin = c.y - halfY - (clearanceY + wildMaxBeyondEdgeY);
@@ -546,7 +540,7 @@ public class GameController : MonoBehaviour
     private static bool TryGetPlaneEntryPoint(
         Vector3 prevCenter, Vector3 nowCenter,
         Vector3 planePointP0, Vector3 planeNormalN,
-        float sphereRadius, bool anyPartCounts,
+        float sphereRadius, bool anyPartCountsBool,
         out Vector3 centerAtEntry, out Vector3 contactPointOnPlane, out float fraction01)
     {
         // Ensure a vertical plane normal (no Y) and normalize.
@@ -564,7 +558,7 @@ public class GameController : MonoBehaviour
         var sNow  = Vector3.Dot(nowCenter  - planePointP0, n);
 
         // Choose what "counts" as crossing.
-        var threshold = anyPartCounts ? -sphereRadius : 0f;
+        var threshold = anyPartCountsBool ? -sphereRadius : 0f;
 
         // Did we cross the threshold this step? (allow either direction of travel)
         var a = sPrev - threshold;
@@ -582,7 +576,7 @@ public class GameController : MonoBehaviour
         centerAtEntry = Vector3.Lerp(prevCenter, nowCenter, fraction01);
 
         // Contact point on the plane (the sphere's front-most point at first touch).
-        contactPointOnPlane = anyPartCounts ? centerAtEntry + n * sphereRadius
+        contactPointOnPlane = anyPartCountsBool ? centerAtEntry + n * sphereRadius
             : centerAtEntry;
 
         return true;
