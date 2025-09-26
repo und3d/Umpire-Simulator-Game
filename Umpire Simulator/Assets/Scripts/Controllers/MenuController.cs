@@ -33,11 +33,11 @@ public class MenuController : MonoBehaviour
     
     private void Awake()
     {
+        GoToMainMenu();
         SetVolumes();
         PlaySong();
         LevelLoader.Instance.SetLevelReferences(levelSelectButtons, highscoreTextMenu, this);
         LevelLoader.Instance.LoadLevelMenu();
-        GoToMainMenu();
     }
 
     private void DisableViews()
@@ -63,7 +63,7 @@ public class MenuController : MonoBehaviour
     {
         buttonSound.Play();
         DisableViews();
-        LevelLoader.Instance.Save();
+        //LevelLoader.Instance.Save();
         
         mainMenu.alpha = 1;
         mainMenu.interactable = true;

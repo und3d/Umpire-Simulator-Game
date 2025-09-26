@@ -81,9 +81,9 @@ public sealed class LevelLoader : MonoBehaviour
         {
             levelsUnlocked = defaultLevelsUnlocked;
             highscore = 0;
-            musicVolume = 1f;
-            sfxVolume = 1f;
-            callsVolume = 1f;
+            musicVolume = 0.5f;
+            sfxVolume = 0.5f;
+            callsVolume = 0.5f;
             menuController.SetVolumes();
             return;
         }
@@ -92,20 +92,24 @@ public sealed class LevelLoader : MonoBehaviour
         {
             var text = File.ReadAllText(SavePath);
             var data = JsonUtility.FromJson<SaveData>(text);
+            
             levelsUnlocked = (data?.levelsUnlockedData != null)
                 ? new List<bool>(data.levelsUnlockedData)
                 : defaultLevelsUnlocked;
             highscore = data?.highscore ?? 0;
-            musicVolume = data?.musicVolume ?? 1f;
-            sfxVolume = data?.sfxVolume ?? 1f;
-            callsVolume = data?.callsVolume ?? 1f;
-
-            menuController.SetVolumes();
+            musicVolume = data?.musicVolume ?? 0.5f;
+            sfxVolume = data?.sfxVolume ?? 0.5f;
+            callsVolume = data?.callsVolume ?? 0.5f;
         }
-        catch
+        catch (Exception error)
         {
+            Debug.Log($"Fall through catch is happening. Reason: {error}");
             // Fall through to create new SaveData
             levelsUnlocked = defaultLevelsUnlocked;
+            highscore = 0;
+            musicVolume = 0.5f;
+            sfxVolume = 0.5f;
+            callsVolume = 0.5f;
         }
     }
 
