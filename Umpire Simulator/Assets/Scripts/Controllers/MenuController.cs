@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MenuController : MonoBehaviour
 {
@@ -15,13 +17,27 @@ public class MenuController : MonoBehaviour
     [SerializeField] private CanvasGroup controlsMenu;
 
     [SerializeField] private List<Button> levelSelectButtons;
-    [SerializeField] TMP_Text highscoreTextMenu;
+    [SerializeField] private TMP_Text highscoreTextMenu;
+    [SerializeField] private AudioSource buttonSound;
+
+    [Header("Music")] 
+    [SerializeField] private Slider menuMusicSlider;
+    [SerializeField] private Slider sfxSlider;
+    [SerializeField] private Slider callsSlider;
+    [SerializeField] private AudioSource menuSong;
+    [SerializeField] private AudioClip songOne;
+    [SerializeField] private AudioClip songTwo;
+    [SerializeField] private AudioClip songThree;
+    [SerializeField] private AudioClip songFour;
+    [SerializeField] private AudioClip songFive;
     
     private void Awake()
     {
-        GoToMainMenu();
-        LevelLoader.Instance.SetLevelReferences(levelSelectButtons, highscoreTextMenu);
+        SetVolumes();
+        PlaySong();
+        LevelLoader.Instance.SetLevelReferences(levelSelectButtons, highscoreTextMenu, this);
         LevelLoader.Instance.LoadLevelMenu();
+        GoToMainMenu();
     }
 
     private void DisableViews()
@@ -33,10 +49,21 @@ public class MenuController : MonoBehaviour
             view.blocksRaycasts = false;
         }
     }
+
+    public void SetVolumes()
+    {
+        menuMusicSlider.value = LevelLoader.Instance.musicVolume;
+        sfxSlider.value = LevelLoader.Instance.sfxVolume;
+        callsSlider.value = LevelLoader.Instance.callsVolume;
+        menuSong.volume = LevelLoader.Instance.musicVolume;
+        buttonSound.volume = LevelLoader.Instance.sfxVolume;
+    }
     
     public void GoToMainMenu()
     {
+        buttonSound.Play();
         DisableViews();
+        LevelLoader.Instance.Save();
         
         mainMenu.alpha = 1;
         mainMenu.interactable = true;
@@ -46,7 +73,9 @@ public class MenuController : MonoBehaviour
     
     public void GoToSettingsMenu()
     {
+        buttonSound.Play();
         DisableViews();
+        SetVolumes();
         
         settingsMenu.alpha = 1;
         settingsMenu.interactable = true;
@@ -55,6 +84,7 @@ public class MenuController : MonoBehaviour
 
     public void GoToControlsMenu()
     {
+        buttonSound.Play();
         DisableViews();
         
         controlsMenu.alpha = 1;
@@ -64,6 +94,7 @@ public class MenuController : MonoBehaviour
 
     public void GoToModeSelection()
     {
+        buttonSound.Play();
         DisableViews();
         
         modeSelectionMenu.alpha = 1;
@@ -73,29 +104,81 @@ public class MenuController : MonoBehaviour
 
     public void GoToLevelSelection()
     {
+        buttonSound.Play();
         DisableViews();
         levelSelectionMenu.alpha = 1;
         levelSelectionMenu.interactable = true;
         levelSelectionMenu.blocksRaycasts = true;
     }
 
+    private void PlaySong()
+    {
+        var songID = Random.Range(0, 5);
+
+        menuSong.clip = songID switch
+        {
+            0 => songOne,
+            1 => songTwo,
+            2 => songThree,
+            3 => songFour,
+            4 => songFive,
+            _ => songOne
+        };
+        
+        menuSong.Play();
+        StartCoroutine(PlaySongCoroutine(menuSong.clip.length));
+    }
+
+    private IEnumerator PlaySongCoroutine(float songDuration)
+    {
+        var elapsed = 0f;
+        while (elapsed < songDuration + 15f)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            
+            yield return null;
+        }
+        
+        PlaySong();
+    }
+    
+    public void SetMusicVolume()
+    {
+        LevelLoader.Instance.musicVolume = menuMusicSlider.value;
+        menuSong.volume = LevelLoader.Instance.musicVolume;
+    }
+
+    public void SetsfxVolume()
+    {
+        LevelLoader.Instance.sfxVolume = sfxSlider.value;
+    }
+    
+    public void SetCallsVolume()
+    {
+        LevelLoader.Instance.callsVolume = callsSlider.value;
+    }
+
     public void SetLevel(int level)
     {
+        buttonSound.Play();
         LevelLoader.Instance.SetLevel(level);
     }
 
     public void GoToEndlessMode()
     {
+        buttonSound.Play();
         SceneManager.LoadScene("EndlessMode");
     }
 
     public void GoToPracticeMode()
     {
+        buttonSound.Play();
         SceneManager.LoadScene("PracticeMode");
     }
     
     public void QuitGame()
     {
+        buttonSound.Play();
         Application.Quit();
         LevelLoader.Instance.Save();
     }

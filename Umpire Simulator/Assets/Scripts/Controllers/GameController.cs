@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
@@ -56,7 +57,16 @@ public class GameController : MonoBehaviour
     // Shape of the distance distributions
     [SerializeField, Min(1f)] private float nearEdgeBiasPower   = 1.375f; // >1 squeezes near 0 (closer to edge)
     [SerializeField, Min(0.1f)] private float wildTailPower     = 0.6f; // <1 pulls toward far end of [nearMax..wildMax]
-
+    
+    [Header("Sound Effects")]
+    [SerializeField] private AudioSource pitchSound;
+    [SerializeField] private AudioSource catchSound;
+    [SerializeField] private AudioSource callSound;
+    [SerializeField] private AudioClip strikeClip;
+    [SerializeField] private AudioClip strikeClipTwo;
+    [SerializeField] private AudioClip strikeClipThree;
+    [SerializeField] private AudioClip strikeClipFour;
+    [SerializeField] private AudioClip ballClip;
 
     public Vector3 nextPitchLocation;
     private GameObject currentBall;
@@ -68,6 +78,7 @@ public class GameController : MonoBehaviour
     private Vector3 lastPitchLocation;
     private bool hasPrev;
     private bool capturedThisPitch;
+    private bool isAudioPaused;
     private int pitchCount;
     private int correctCalls;
     private int starsEarned;
@@ -88,6 +99,10 @@ public class GameController : MonoBehaviour
     
     private void Start()
     {
+        pitchSound.volume = LevelLoader.Instance.sfxVolume;
+        callSound.volume = LevelLoader.Instance.sfxVolume;
+        catchSound.volume = LevelLoader.Instance.sfxVolume;
+        
         originalCamTransform = cam.transform.position;
         originalCamRotation = cam.transform.rotation;
         clickAction = InputSystem.actions.FindAction("LeftClick");
@@ -151,6 +166,8 @@ public class GameController : MonoBehaviour
         }
         
         countdownActive = true;
+        
+        pitchSound.Play();
         StartCoroutine(PitchClockTimer());
     }
 
@@ -177,10 +194,10 @@ public class GameController : MonoBehaviour
     private IEnumerator PitchClockTimer()
     {
         var timer = timeBetweenPitches;
-        while (timer > 0)
+        while (timer >= 0.5)
         {
-            yield return new WaitForSeconds(1f);
-            timer -= 1f;
+            yield return new WaitForSeconds(0.5f);
+            timer -= 0.5f;
             UpdatePitchClock(timer);
         }
         
@@ -252,6 +269,7 @@ public class GameController : MonoBehaviour
             
             Debug.Log("Crossed catch zone.");
             
+            catchSound.Play();
             Destroy(currentBall);
         }
 
@@ -324,6 +342,8 @@ public class GameController : MonoBehaviour
 
     public void CallStrike()
     {
+        PlayStrikeCall();
+        
         if (IsStrike(lastPitchLocation))
         {
             correctCalls++;
@@ -351,6 +371,8 @@ public class GameController : MonoBehaviour
 
     public void CallBall()
     {
+        PlayBallCall();
+        
         if (!IsStrike(lastPitchLocation))
         {
             correctCalls++;
@@ -376,8 +398,48 @@ public class GameController : MonoBehaviour
         ArmForNextPitch();
     }
 
+    public void PauseAudio()
+    {
+        if (!pitchSound.isPlaying) 
+            return;
+        
+        pitchSound.Pause();
+        isAudioPaused = true;
+    }
+
+    public void ResumeAudio()
+    {
+        if (!isAudioPaused) 
+            return;
+        
+        pitchSound.UnPause();
+        isAudioPaused = false;
+    }
+
     #region Helpers
 
+    private void PlayStrikeCall()
+    {
+        var callID = Random.Range(0, 4);
+
+        callSound.clip = callID switch
+        {
+            0 => strikeClip,
+            1 => strikeClipTwo,
+            2 => strikeClipThree,
+            3 => strikeClipFour,
+            _ => strikeClip
+        };
+        
+        callSound.Play();
+    }
+
+    private void PlayBallCall()
+    {
+        callSound.clip = ballClip;
+        callSound.Play();
+    }
+    
     private float GetRandomPitchVelocity()
     {
         return Random.Range(pitchSpeedLower, pitchSpeedUpper);
@@ -588,7 +650,7 @@ public class GameController : MonoBehaviour
 
     private void UpdatePitchClock(float timeLeft)
     {
-        if (timeLeft > 0)
+        if (timeLeft >= 1)
         {
             timeLeft = Mathf.FloorToInt(timeLeft % 60);
 

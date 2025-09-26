@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     [SerializeField] private GameController gameController;
+    [SerializeField] private AudioSource buttonSound;
     
     [SerializeField] private List<CanvasGroup> viewList;
     
@@ -107,6 +108,7 @@ public class UIController : MonoBehaviour
 
     private void ShowPauseMenu()
     {
+        gameController.PauseAudio();
         DisableViews();
         if (gameButtonsActive)
             HideGameButtons();
@@ -135,6 +137,7 @@ public class UIController : MonoBehaviour
     
     private void ShowGameView()
     {
+        gameController.ResumeAudio();
         DisableViews();
         if (gameButtonsActive)
             ShowGameButtons();
@@ -301,6 +304,7 @@ public class UIController : MonoBehaviour
 
     public void ShowLastPitchLocation()
     {
+        buttonSound.Play();
         DisableViews();
         showingLastPitch = true;
         
@@ -311,21 +315,25 @@ public class UIController : MonoBehaviour
 
     public void NextLevel()
     {
+        buttonSound.Play();
         LevelLoader.Instance.AdvanceLevel(gameController.level);
     }
     
     public void RestartGame()
     {
+        buttonSound.Play();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void QuitGame()
     {
+        buttonSound.Play();
         Application.Quit();
     }
     
     public void GoToMainMenu()
     {
+        buttonSound.Play();
         SceneManager.LoadScene("Menu");
     }
 }

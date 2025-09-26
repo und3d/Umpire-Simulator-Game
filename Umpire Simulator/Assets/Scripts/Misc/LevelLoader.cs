@@ -23,7 +23,11 @@ public sealed class LevelLoader : MonoBehaviour
     private int levelcorrectForOneStar = -1;
     private int levelcorrectForTwoStars = -1;
     private int levelcorrectForThreeStars = -1;
-
+    private MenuController menuController;
+    public float musicVolume = 1f;
+    public float sfxVolume = 1f;
+    public float callsVolume = 1f;
+    
     public int highscore;
 
     [SerializeField] private List<bool> defaultLevelsUnlocked = new List<bool>(10);
@@ -61,6 +65,9 @@ public sealed class LevelLoader : MonoBehaviour
         // Copy this component's data to the save
         data.levelsUnlockedData = new List<bool>(levelsUnlocked ?? new List<bool>());
         data.highscore = highscore;
+        data.musicVolume = musicVolume;
+        data.sfxVolume = sfxVolume;
+        data.callsVolume = callsVolume;
         
         // Write to file
         var json = JsonUtility.ToJson(data, true);
@@ -74,6 +81,10 @@ public sealed class LevelLoader : MonoBehaviour
         {
             levelsUnlocked = defaultLevelsUnlocked;
             highscore = 0;
+            musicVolume = 1f;
+            sfxVolume = 1f;
+            callsVolume = 1f;
+            menuController.SetVolumes();
             return;
         }
 
@@ -85,6 +96,11 @@ public sealed class LevelLoader : MonoBehaviour
                 ? new List<bool>(data.levelsUnlockedData)
                 : defaultLevelsUnlocked;
             highscore = data?.highscore ?? 0;
+            musicVolume = data?.musicVolume ?? 1f;
+            sfxVolume = data?.sfxVolume ?? 1f;
+            callsVolume = data?.callsVolume ?? 1f;
+
+            menuController.SetVolumes();
         }
         catch
         {
@@ -142,11 +158,12 @@ public sealed class LevelLoader : MonoBehaviour
         levelsUnlocked[level] = true;
     }
 
-    public void SetLevelReferences(List<Button> levelSelectButtons, TMP_Text highscoreTextMenu)
+    public void SetLevelReferences(List<Button> levelSelectButtons, TMP_Text highscoreTextMenu, MenuController _menuController)
     {
         levels = levelSelectButtons;
         highscoreText = highscoreTextMenu;
-        
+        menuController = _menuController;
+
     }
 
     private void OnApplicationQuit()
@@ -195,4 +212,7 @@ public class SaveData
 {
     public List<bool> levelsUnlockedData = new List<bool>();
     public int highscore;
+    public float musicVolume;
+    public float sfxVolume;
+    public float callsVolume;
 }
