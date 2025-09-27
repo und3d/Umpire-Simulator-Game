@@ -5307,11 +5307,12 @@ MonoBehaviour:
   sfxSlider: {fileID: 1303116185}
   callsSlider: {fileID: 1389373800}
   menuSong: {fileID: 1138109948}
-  songOne: {fileID: 8300000, guid: c896e707ee977954f8a731454ffeb839, type: 3}
-  songTwo: {fileID: 8300000, guid: 52a32c54ace9d82438fcb02493b522df, type: 3}
-  songThree: {fileID: 8300000, guid: 72fb64c79c923fc4d8ca0fe8bc860a84, type: 3}
-  songFour: {fileID: 8300000, guid: 279f70b3cc77f6f4fb240beaed3fb9cc, type: 3}
-  songFive: {fileID: 8300000, guid: aaa02a978164f7a42a15e87be47ff153, type: 3}
+  songOne: {fileID: 8300000, guid: 72fb64c79c923fc4d8ca0fe8bc860a84, type: 3}
+  songTwo: {fileID: 8300000, guid: dc9272b73568f8340989c172933ef88c, type: 3}
+  songThree: {fileID: 8300000, guid: b2f15f2491fbabf4c8a02748b7322037, type: 3}
+  songFour: {fileID: 8300000, guid: 346d348d3597c5a498f4d3fe171fbda6, type: 3}
+  songFive: {fileID: 8300000, guid: b035609638d79b54eb6f7b634ab4512e, type: 3}
+  songSix: {fileID: 8300000, guid: 27cf3cb49ae6c434a96f9c0fcf39d471, type: 3}
 --- !u!114 &1138109946
 MonoBehaviour:
   m_ObjectHideFlags: 0

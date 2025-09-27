@@ -31,6 +31,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private AudioClip songThree;
     [SerializeField] private AudioClip songFour;
     [SerializeField] private AudioClip songFive;
+    [SerializeField] private AudioClip songSix;
     
     private void Awake()
     {
@@ -116,17 +117,24 @@ public class MenuController : MonoBehaviour
 
     private void PlaySong()
     {
-        var songID = Random.Range(0, 5);
+        var songID = Random.Range(0, 11);
 
         menuSong.clip = songID switch
         {
-            0 => songOne,
-            1 => songTwo,
-            2 => songThree,
-            3 => songFour,
-            4 => songFive,
-            _ => songOne
+            0 or 1 => songOne,
+            2 or 3 => songTwo,
+            4 or 5 => songThree,
+            6 or 7 => songFour,
+            8 or 9 => songFive,
+            10 => songSix,
+            _ => null
         };
+
+        if (!menuSong.clip)
+        {
+            Debug.Log($"No song found. Song ID: {songID}. Trying again.");
+            PlaySong();
+        }
         
         menuSong.Play();
         StartCoroutine(PlaySongCoroutine(menuSong.clip.length));
