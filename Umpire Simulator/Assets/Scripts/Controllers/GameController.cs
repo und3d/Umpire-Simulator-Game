@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private Transform catchZone;
     [SerializeField] private BoxCollider strikezoneCollider;
     [SerializeField] private UIController uiController;
+    [SerializeField] private TMP_Text versionText;
     
     [Header("Gamemode Settings")]
     public bool isPracticeMode;
@@ -106,6 +107,9 @@ public class GameController : MonoBehaviour
         originalCamTransform = cam.transform.position;
         originalCamRotation = cam.transform.rotation;
         clickAction = InputSystem.actions.FindAction("LeftClick");
+
+        LevelLoader.Instance.versionText = versionText;
+        LevelLoader.Instance.SetVersionText();
         
         var newSeed = (int) DateTime.Now.Ticks;
         Random.InitState(newSeed);

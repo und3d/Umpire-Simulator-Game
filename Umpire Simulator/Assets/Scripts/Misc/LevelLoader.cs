@@ -27,6 +27,8 @@ public sealed class LevelLoader : MonoBehaviour
     public float musicVolume = 1f;
     public float sfxVolume = 1f;
     public float callsVolume = 1f;
+    public TMP_Text versionText;
+
     
     public int highscore;
 
@@ -209,6 +211,11 @@ public sealed class LevelLoader : MonoBehaviour
             levelParams.correctForThreeStars);
         
         SceneManager.LoadScene("LevelMode");
+    }
+
+    public void SetVersionText()
+    {
+        versionText.text = $"{Application.version}";
     }
 }
 

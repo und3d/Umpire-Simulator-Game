@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelDatabase
   levelContainer:
   - level: 1
-    pitchAmount: 3
-    correctForOneStar: 1
+    pitchAmount: 6
+    correctForOneStar: 4
     correctForTwoStars: 5
     correctForThreeStars: 6
   - level: 2

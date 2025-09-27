@@ -15,6 +15,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private CanvasGroup levelSelectionMenu;
     [SerializeField] private CanvasGroup settingsMenu;
     [SerializeField] private CanvasGroup controlsMenu;
+    [SerializeField] private TMP_Text versionText;
 
     [SerializeField] private List<Button> levelSelectButtons;
     [SerializeField] private TMP_Text highscoreTextMenu;
@@ -33,6 +34,8 @@ public class MenuController : MonoBehaviour
     
     private void Awake()
     {
+        LevelLoader.Instance.versionText = versionText;
+        LevelLoader.Instance.SetVersionText();
         GoToMainMenu();
         SetVolumes();
         PlaySong();
