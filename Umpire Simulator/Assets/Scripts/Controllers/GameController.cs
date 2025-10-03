@@ -284,17 +284,18 @@ public class GameController : MonoBehaviour
 
     private void Update()
     {
-        if (clickAction.WasPressedThisFrame() && uiController.showingLevelPitches)
-        {
-            var pos = Mouse.current != null ? Mouse.current.position.ReadValue() : Touchscreen.current.primaryTouch.position.ReadValue();
-            var ray = cam.ScreenPointToRay(pos);
-            
-            if (Physics.Raycast(ray, out var hit, 25f, ballLayer))
-            {
-                Debug.Log("Clicked on: " + hit.collider.gameObject.name);
-                hit.collider.gameObject.GetComponent<Baseball>().ShowPitch();
-            }
-        }
+        var touch = Touchscreen.current?.primaryTouch;
+        
+        if (touch == null || !touch.press.wasPressedThisFrame) return;
+        
+        var pos = touch.position.ReadValue();
+        var ray = cam.ScreenPointToRay(pos);
+
+        if (!Physics.Raycast(ray, out var hit, 25f, ballLayer)) return;
+        
+        Debug.Log("Tapped on: " + hit.collider.gameObject.name);
+        hit.collider.GetComponent<Baseball>().ShowPitch();
+
     }
 
     private IEnumerator ShowPitchLocations()
