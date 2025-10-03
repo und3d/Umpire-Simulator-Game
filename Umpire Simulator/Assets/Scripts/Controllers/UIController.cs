@@ -52,6 +52,7 @@ public class UIController : MonoBehaviour
 
     public bool gameButtonsActive;
     public bool showingLevelPitches;
+    public bool showingLastPitchAuto;
     
     private void Awake()
     {
@@ -93,6 +94,9 @@ public class UIController : MonoBehaviour
 
         if ((gameController.isEndlessMode || gameController.isPracticeMode) && showingLastPitch && continueAction.WasPressedThisFrame())
         {
+            if (showingLastPitchAuto)
+                Time.timeScale = 1;
+            
             ShowGameView();
         }
     }

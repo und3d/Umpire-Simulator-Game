@@ -646,7 +646,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.6988983, y: 393.33527}
+  m_AnchoredPosition: {x: 0.6988983, y: 841.3352}
   m_SizeDelta: {x: 1525.3977, y: 139.9965}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &86296821
@@ -1146,11 +1146,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 726709548}
-  m_Father: {fileID: 1792370226}
+  m_Father: {fileID: 882676993}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 234.66675}
+  m_AnchoredPosition: {x: 0, y: 827.2593}
   m_SizeDelta: {x: 1127.25, y: 250.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &144016093
@@ -4350,7 +4350,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -84, y: 0}
+  m_SizeDelta: {x: -212, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &726709549
 MonoBehaviour:
@@ -4399,7 +4399,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 169.5
+  m_fontSize: 148.7
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5158,6 +5158,8 @@ RectTransform:
   - {fileID: 86296820}
   - {fileID: 1303116184}
   - {fileID: 1389373799}
+  - {fileID: 1396947989}
+  - {fileID: 144016092}
   - {fileID: 106154511}
   m_Father: {fileID: 322995818}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7549,7 +7551,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.6988983, y: -166.65161}
+  m_AnchoredPosition: {x: 0.6988983, y: 281.3484}
   m_SizeDelta: {x: 1525.3977, y: 139.9965}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1303116185
@@ -8176,7 +8178,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.6988983, y: -726.63824}
+  m_AnchoredPosition: {x: 0.6988983, y: -278.63824}
   m_SizeDelta: {x: 1525.3977, y: 139.9965}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1389373800
@@ -8355,7 +8357,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 80, y: 21.333374}
+  m_AnchoredPosition: {x: 80, y: 21.333252}
   m_SizeDelta: {x: 794.7026, y: 132.4505}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1391442561
@@ -8489,11 +8491,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2123299025}
-  m_Father: {fileID: 1792370226}
+  m_Father: {fileID: 882676993}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 554.66675}
+  m_AnchoredPosition: {x: 0, y: 1218.3705}
   m_SizeDelta: {x: 1127.25, y: 250.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1396947990
@@ -8701,7 +8703,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -53.333313, y: -91.9301}
+  m_AnchoredPosition: {x: -53.333374, y: -91.93005}
   m_SizeDelta: {x: -277.3334, y: -311.86}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1408069505
@@ -11092,8 +11094,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 425294925}
-  - {fileID: 1396947989}
-  - {fileID: 144016092}
   - {fileID: 199526871}
   - {fileID: 1282320716}
   - {fileID: 1953509099}
@@ -12398,7 +12398,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -84, y: 0}
+  m_SizeDelta: {x: -212, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2123299026
 MonoBehaviour:
@@ -12447,7 +12447,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 187.2
+  m_fontSize: 164.25
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1

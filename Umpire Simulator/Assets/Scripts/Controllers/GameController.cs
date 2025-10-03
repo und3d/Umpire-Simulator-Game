@@ -22,32 +22,36 @@ public class GameController : MonoBehaviour
     [SerializeField] private UIController uiController;
     [SerializeField] private TMP_Text versionText;
     public GameObject levelModeBackButton;
-    
-    [Header("Gamemode Settings")]
-    public bool isPracticeMode;
+
+    [Header("Gamemode Settings")] public bool isPracticeMode;
     public bool isEndlessMode;
     public bool isLevelMode;
-    
-    [Header("EndlessModeSettings")]
-    [SerializeField] private int lives = 3;
-    
-    [Header("LevelModeSettings")]
-    [SerializeField] public int level = -1;
+
+    [Header("EndlessModeSettings")] [SerializeField]
+    private int lives = 3;
+
+    [Header("LevelModeSettings")] [SerializeField]
+    public int level = -1;
+
     [SerializeField] private int pitchAmount = -1;
     [SerializeField] private int correctForOneStar = -1;
     [SerializeField] private int correctForTwoStars = -1;
     [SerializeField] private int correctForThreeStars = -1;
-    
-    [Header("Pitch Probabilities")]
-    [SerializeField, Range(0f,1f)] private float strikeProbability            = 0.6f; // overall strike rate
-    [SerializeField, Range(0f,1f)] private float cornerAmongBallsProbability  = 0.20f; // among balls, chance it's a corner
-    [SerializeField, Range(0f,1f)] private float wildMissProbability          = 0.05f; // among balls, chance distance comes from the "wild" tail
-    
-    [Header("Pitch Variables")]
-    [SerializeField] private float timeBetweenPitches = 5f;
+
+    [Header("Pitch Probabilities")] [SerializeField, Range(0f, 1f)]
+    private float strikeProbability = 0.6f; // overall strike rate
+
+    [SerializeField, Range(0f, 1f)] private float cornerAmongBallsProbability = 0.20f; // among balls, chance it's a corner
+
+    [SerializeField, Range(0f, 1f)]
+    private float wildMissProbability = 0.05f; // among balls, chance distance comes from the "wild" tail
+
+    [Header("Pitch Variables")] [SerializeField]
+    private float timeBetweenPitches = 5f;
+
     [SerializeField] private float pitchSpeedUpper = 44f;
     [SerializeField] private float pitchSpeedLower = 34f;
-    
+
     // Near-edge overshoot caps (typical "nibbles")
     [SerializeField, Min(0f)] private float nearMaxBeyondEdgeY = 0.15f; // m above/below top/bottom
     [SerializeField, Min(0f)] private float nearMaxBeyondEdgeZ = 0.15f; // m left/right of sides
@@ -57,11 +61,12 @@ public class GameController : MonoBehaviour
     [SerializeField, Min(0f)] private float wildMaxBeyondEdgeZ = 0.50f;
 
     // Shape of the distance distributions
-    [SerializeField, Min(1f)] private float nearEdgeBiasPower   = 1.375f; // >1 squeezes near 0 (closer to edge)
-    [SerializeField, Min(0.1f)] private float wildTailPower     = 0.6f; // <1 pulls toward far end of [nearMax..wildMax]
-    
-    [Header("Sound Effects")]
-    [SerializeField] private AudioSource pitchSound;
+    [SerializeField, Min(1f)] private float nearEdgeBiasPower = 1.375f; // >1 squeezes near 0 (closer to edge)
+    [SerializeField, Min(0.1f)] private float wildTailPower = 0.6f; // <1 pulls toward far end of [nearMax..wildMax]
+
+    [Header("Sound Effects")] [SerializeField]
+    private AudioSource pitchSound;
+
     [SerializeField] private AudioSource catchSound;
     [SerializeField] private AudioSource callSound;
     [SerializeField] private AudioClip strikeClip;
@@ -85,11 +90,11 @@ public class GameController : MonoBehaviour
     private int correctCalls;
     private int starsEarned;
     private InputAction clickAction;
-    
+
     private List<Vector3> currentLevelsPitchLocations = new List<Vector3>();
     private List<bool> currentLevelsCallsCorrect = new List<bool>();
     private List<GameObject> visualPitches = new List<GameObject>();
-    
+
     public Vector3 lastCenterAtEntry;
     public Vector3 lastContactPointWorld;
     public float lastEntryT;
@@ -98,23 +103,23 @@ public class GameController : MonoBehaviour
     public bool creatingPitches;
 
     public Vector3 pitchLocationToShow;
-    
+
     private void Start()
     {
         pitchSound.volume = LevelLoader.Instance.sfxVolume;
         callSound.volume = LevelLoader.Instance.sfxVolume;
         catchSound.volume = LevelLoader.Instance.sfxVolume;
-        
+
         originalCamTransform = cam.transform.position;
         originalCamRotation = cam.transform.rotation;
         clickAction = InputSystem.actions.FindAction("LeftClick");
 
         LevelLoader.Instance.versionText = versionText;
         LevelLoader.Instance.SetVersionText();
-        
-        var newSeed = (int) DateTime.Now.Ticks;
+
+        var newSeed = (int)DateTime.Now.Ticks;
         Random.InitState(newSeed);
-        
+
         UpdatePitchClock(timeBetweenPitches);
         ArmForNextPitch();
 
@@ -129,49 +134,51 @@ public class GameController : MonoBehaviour
         }
         else if (isLevelMode)
         {
-            LevelLoader.Instance.LoadLevel(out level, out pitchAmount, out correctForOneStar, out correctForTwoStars, out correctForThreeStars);
-            
+            LevelLoader.Instance.LoadLevel(out level, out pitchAmount, out correctForOneStar, out correctForTwoStars,
+                out correctForThreeStars);
+
             uiController.UpdateStarScoreText(correctForOneStar, correctForTwoStars, correctForThreeStars);
             uiController.ShowLevelModeUI();
             uiController.UpdateRemainingPitches(pitchAmount);
         }
     }
-    
+
     // Call this before launching a new pitch
     private void ArmForNextPitch()
     {
         capturedThisPitch = false;
         hasPrev = false; // re-bootstrap prevCenter on the next FixedUpdate
         currentBall = null;
-        
+
         // Ran out of Pitches in Level Mode
         if (pitchCount >= pitchAmount && isLevelMode)
         {
-            if (correctCalls >= correctForOneStar)      // Player Beat Level
+            if (correctCalls >= correctForOneStar) // Player Beat Level
             {
                 starsEarned = 1;
-                if (correctCalls >= correctForTwoStars)     // Check if player earned second star
+                if (correctCalls >= correctForTwoStars) // Check if player earned second star
                     starsEarned = 2;
                 {
-                    if (correctCalls >= correctForThreeStars)       // Check if player earned third star
+                    if (correctCalls >= correctForThreeStars) // Check if player earned third star
                         starsEarned = 3;
                 }
                 uiController.GameOver(true, correctCalls, starsEarned);
-                LevelLoader.Instance.UnlockLevel(level);    // Level number in list is -1 compared to actual level number
+                LevelLoader.Instance.UnlockLevel(level); // Level number in list is -1 compared to actual level number
                 return;
             }
+
             uiController.GameOver(false, correctCalls, starsEarned);
         }
-        
+
         // Ran out of Lives in Endless Mode
         if (lives <= 0 && isEndlessMode)
         {
             uiController.GameOver(false, correctCalls, starsEarned);
             return;
         }
-        
+
         countdownActive = true;
-        
+
         pitchSound.Play();
         StartCoroutine(PitchClockTimer());
     }
@@ -182,7 +189,7 @@ public class GameController : MonoBehaviour
         pitchCount++;
         uiController.UpdatePitchCountText(pitchCount);
         uiController.UpdateRemainingPitches(pitchAmount - pitchCount);
-        
+
         currentBall = Instantiate(ballPrefab, releasePoint.position, Quaternion.identity);
         var pitchVelocity = GetRandomPitchVelocity();
         var pitchLocation = GetRandomPitchLocation();
@@ -192,10 +199,10 @@ public class GameController : MonoBehaviour
 
         hasPrev = true;
         prevCenter = currentBallRigidbody.position - currentBallRigidbody.linearVelocity * (0.5f * Time.fixedDeltaTime);
-        
+
         currentBallRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
     }
-    
+
     private IEnumerator PitchClockTimer()
     {
         var timer = timeBetweenPitches;
@@ -205,7 +212,7 @@ public class GameController : MonoBehaviour
             timer -= 0.5f;
             UpdatePitchClock(timer);
         }
-        
+
         PitchBall();
         yield return null;
     }
@@ -213,7 +220,7 @@ public class GameController : MonoBehaviour
     private void FixedUpdate()
     {
         if (!currentBall || !strikezone || !catchZone) return;
-        
+
         // Current sphere center from the physics engine (meters)
         var nowCenter = currentBallRigidbody.position;
 
@@ -221,11 +228,16 @@ public class GameController : MonoBehaviour
         if (!hasPrev)
         {
             hasPrev = true;
-            
+
             var v = currentBallRigidbody.linearVelocity;
             prevCenter = nowCenter + v * (0.5f * Time.fixedDeltaTime);
         }
-        if (capturedThisPitch) { prevCenter = nowCenter; return; }
+
+        if (capturedThisPitch)
+        {
+            prevCenter = nowCenter;
+            return;
+        }
 
         // Define the vertical strike plane: point p0 and unit normal n (yaw-aware)
         var p0Strike = strikezone.position;
@@ -234,22 +246,22 @@ public class GameController : MonoBehaviour
         var nStrike = GetPlateNormalStrikezone();
         var step = nowCenter - prevCenter;
         if (Vector3.Dot(step, nStrike) < 0f) nStrike = -nStrike;
-        
+
         var nCatch = GetPlateNormalCatchZone();
         if (Vector3.Dot(step, nCatch) < 0f) nCatch = -nCatch;
-        
+
         // Check if we crossed the plane this physics step and recover exact entry
         if (TryGetPlaneEntryPoint(prevCenter, nowCenter, p0Strike, nStrike, ballRadius, anyPartCounts,
                 out var centerAtEntry, out var contactPointOnPlane, out var t))
         {
             // Record results (meters, world space)
-            lastCenterAtEntry     = centerAtEntry;
+            lastCenterAtEntry = centerAtEntry;
             lastContactPointWorld = contactPointOnPlane;
-            lastEntryT            = t;
-            
+            lastEntryT = t;
+
             // Where the ball center will cross the plane
             var sPrev0 = Vector3.Dot(prevCenter - p0Strike, nStrike);
-            var sNow0  = Vector3.Dot(nowCenter  - p0Strike, nStrike);
+            var sNow0 = Vector3.Dot(nowCenter - p0Strike, nStrike);
             var denom0 = sNow0 - sPrev0;
             var centerOnPlane = centerAtEntry;
             if (Mathf.Abs(denom0) > 1e-6f)
@@ -257,9 +269,9 @@ public class GameController : MonoBehaviour
                 var tCenter = Mathf.Clamp01((0f - sPrev0) / denom0);
                 centerOnPlane = Vector3.Lerp(prevCenter, nowCenter, tCenter);
             }
-            
+
             // Mark captured; if you want to spawn a frozen ball elsewhere, do it here
-            
+
             lastPitchLocation = centerOnPlane;
             currentLevelsPitchLocations.Add(centerOnPlane);
         }
@@ -268,34 +280,18 @@ public class GameController : MonoBehaviour
                 out contactPointOnPlane, out t))
         {
             capturedThisPitch = true;
-            
+
             uiController.ShowGameButtons();
             uiController.gameButtonsActive = true;
-            
+
             Debug.Log("Crossed catch zone.");
-            
+
             catchSound.Play();
             Destroy(currentBall);
         }
 
         // Prepare for next physics step
         prevCenter = nowCenter;
-    }
-
-    private void Update()
-    {
-        var touch = Touchscreen.current?.primaryTouch;
-        
-        if (touch == null || !touch.press.wasPressedThisFrame) return;
-        
-        var pos = touch.position.ReadValue();
-        var ray = cam.ScreenPointToRay(pos);
-
-        if (!Physics.Raycast(ray, out var hit, 25f, ballLayer)) return;
-        
-        Debug.Log("Tapped on: " + hit.collider.gameObject.name);
-        hit.collider.GetComponent<Baseball>().ShowPitch();
-
     }
 
     private IEnumerator ShowPitchLocations()
@@ -308,16 +304,17 @@ public class GameController : MonoBehaviour
         {
             delayInterval = 1;
         }
-        
+
         yield return new WaitForSecondsRealtime(delayInterval);
-        
+
         foreach (var location in currentLevelsPitchLocations)
         {
             visualPitches.Add(CreateBallAtLocationlevels(location, index, currentLevelsCallsCorrect[index]));
             index++;
-            
+
             yield return new WaitForSecondsRealtime(delayInterval);
         }
+
         creatingPitches = false;
     }
 
@@ -330,10 +327,10 @@ public class GameController : MonoBehaviour
     {
         var ball = Instantiate(ballPrefab, location, Quaternion.identity);
         ball.GetComponentInChildren<Renderer>().material.color = isStrike ? Color.indianRed : Color.cadetBlue;
-        
+
         return ball;
     }
-    
+
     private GameObject CreateBallAtLocationlevels(Vector3 location, int pitchNumber, bool correctCall)
     {
         var ball = Instantiate(ballPrefab, location, Quaternion.identity);
@@ -342,14 +339,14 @@ public class GameController : MonoBehaviour
         ball.TryGetComponent(out Baseball baseballScript);
         baseballScript.pitchNumText.enabled = true;
         baseballScript.pitchNumText.text = (pitchNumber + 1).ToString();
-        
+
         return ball;
     }
 
     public void CallStrike()
     {
         PlayStrikeCall();
-        
+
         if (IsStrike(lastPitchLocation))
         {
             correctCalls++;
@@ -372,13 +369,21 @@ public class GameController : MonoBehaviour
         pitchLocationToShow = lastPitchLocation;
         uiController.HideGameButtons();
         uiController.gameButtonsActive = false;
+
         ArmForNextPitch();
+
+        if (isPracticeMode)
+        {
+            Time.timeScale = 0;
+            uiController.ShowLastPitchLocation();
+            PauseAudio();
+        }
     }
 
     public void CallBall()
     {
         PlayBallCall();
-        
+
         if (!IsStrike(lastPitchLocation))
         {
             correctCalls++;
@@ -397,27 +402,34 @@ public class GameController : MonoBehaviour
                 currentLevelsCallsCorrect.Add(false);
             }
         }
-        
+
+        ArmForNextPitch();
+
         pitchLocationToShow = lastPitchLocation;
         uiController.HideGameButtons();
         uiController.gameButtonsActive = false;
-        ArmForNextPitch();
+        if (isPracticeMode)
+        {
+            Time.timeScale = 0;
+            uiController.ShowLastPitchLocation();
+            PauseAudio();
+        }
     }
 
     public void PauseAudio()
     {
-        if (!pitchSound.isPlaying) 
+        if (!pitchSound.isPlaying)
             return;
-        
+
         pitchSound.Pause();
         isAudioPaused = true;
     }
 
     public void ResumeAudio()
     {
-        if (!isAudioPaused) 
+        if (!isAudioPaused)
             return;
-        
+
         pitchSound.UnPause();
         isAudioPaused = false;
     }
@@ -429,7 +441,7 @@ public class GameController : MonoBehaviour
         foreach (var ball in visualPitches)
             Destroy(ball);
     }
-    
+
     private void PlayStrikeCall()
     {
         var callID = Random.Range(0, 4);
@@ -442,7 +454,7 @@ public class GameController : MonoBehaviour
             3 => strikeClipFour,
             _ => strikeClip
         };
-        
+
         callSound.Play();
     }
 
@@ -451,12 +463,12 @@ public class GameController : MonoBehaviour
         callSound.clip = ballClip;
         callSound.Play();
     }
-    
+
     private float GetRandomPitchVelocity()
     {
         return Random.Range(pitchSpeedLower, pitchSpeedUpper);
     }
-    
+
     private bool IsStrike(Vector3 contactPoint)
     {
         var t = strikezoneCollider.transform;
@@ -475,16 +487,18 @@ public class GameController : MonoBehaviour
         // Intersects if distance from center to rect ≤ ball radius
         return (dy * dy + dz * dz) <= (ballRadius * ballRadius);
     }
-    
+
     static int RandSign() => (Random.value < 0.5f) ? -1 : +1;
 
     // 0..nearMax with mass near 0 (edge nibbles)
-    float SampleNear(float nearMax) {
+    float SampleNear(float nearMax)
+    {
         return Mathf.Pow(Random.value, nearEdgeBiasPower) * Mathf.Max(0f, nearMax);
     }
 
     // [nearMax..wildMax] with mass toward wildMax (big misses)
-    float SampleWild(float nearMax, float wildMax) {
+    float SampleWild(float nearMax, float wildMax)
+    {
         float u = Random.value;
         // 1 - (1-u)^p biases toward 1 when p<1
         float t = 1f - Mathf.Pow(1f - u, wildTailPower);
@@ -492,7 +506,8 @@ public class GameController : MonoBehaviour
     }
 
     // Pick distance past an edge using the mixture
-    float SampleOvershoot(float nearMax, float wildMax) {
+    float SampleOvershoot(float nearMax, float wildMax)
+    {
         return (Random.value < wildMissProbability)
             ? SampleWild(nearMax, wildMax)
             : SampleNear(nearMax);
@@ -508,30 +523,30 @@ public class GameController : MonoBehaviour
         n.y = 0f;
         return n.sqrMagnitude < 1e-6f ? Vector3.left : n.normalized;
     }
-    
+
     private Vector3 GetPlateNormalCatchZone()
     {
         var n = catchZone.position - releasePoint.position;
         n.y = 0f;
         return n.sqrMagnitude < 1e-6f ? Vector3.left : n.normalized;
     }
-    
+
     private Vector3 GetRandomPitchLocation()
-    { 
+    {
         var plateX = strikezone.position.x;
-        
+
         // Strike zone center & half-extents (WORLD)
         var t = strikezoneCollider.transform;
         var c = t.TransformPoint(strikezoneCollider.center);
         var halfY = 0.5f * strikezoneCollider.size.y * Mathf.Abs(t.lossyScale.y);
         var halfZ = 0.5f * strikezoneCollider.size.z * Mathf.Abs(t.lossyScale.z);
-        
+
         var extraY = 0.005f;
         var extraZ = 0.005f;
-        
+
         var clearanceY = (ballRadius + extraY);
         var clearanceZ = (ballRadius + extraZ);
-        
+
         // Overall clamp region using the WILD caps
         var yMin = c.y - halfY - (clearanceY + wildMaxBeyondEdgeY);
         var yMax = c.y + halfY + (clearanceY + wildMaxBeyondEdgeY);
@@ -553,8 +568,8 @@ public class GameController : MonoBehaviour
 
             if (corner)
             {
-                var sY = RandSign();                         // high / low
-                var sZ = RandSign();                         // right / left
+                var sY = RandSign(); // high / low
+                var sZ = RandSign(); // right / left
                 var dY = SampleOvershoot(nearMaxBeyondEdgeY, wildMaxBeyondEdgeY);
                 var dZ = SampleOvershoot(nearMaxBeyondEdgeZ, wildMaxBeyondEdgeZ);
 
@@ -563,7 +578,7 @@ public class GameController : MonoBehaviour
             }
             else
             {
-                var vertical = (Random.value < 0.5f);       // equal chance: high/low OR left/right
+                var vertical = (Random.value < 0.5f); // equal chance: high/low OR left/right
 
                 if (vertical)
                 {
@@ -589,7 +604,7 @@ public class GameController : MonoBehaviour
         nextPitchLocation = new Vector3(plateX, y, z);
         return nextPitchLocation;
     }
-    
+
     private static Vector3 GetLaunchVelocity(float pitchVelocity, Vector3 startpoint, Vector3 endpoint)
     {
         var deltaX = endpoint.x - startpoint.x;
@@ -602,15 +617,18 @@ public class GameController : MonoBehaviour
         var pitchVelocityFourthP = pitchVelocitySquared * pitchVelocitySquared;
         var pitchDistanceHorizSquared = pitchDistanceHorizontal * pitchDistanceHorizontal;
 
-        var tan = (pitchVelocitySquared - Mathf.Sqrt(pitchVelocityFourthP - gravity * (gravity * pitchDistanceHorizSquared + 2 * deltaY * pitchVelocitySquared))) / (gravity * pitchDistanceHorizontal);
+        var tan = (pitchVelocitySquared - Mathf.Sqrt(pitchVelocityFourthP -
+                                                     gravity * (gravity * pitchDistanceHorizSquared +
+                                                                2 * deltaY * pitchVelocitySquared))) /
+                  (gravity * pitchDistanceHorizontal);
         var cos = 1 / Mathf.Sqrt(1 + tan * tan);
         var sin = tan * cos;
-        
+
         var launchVelocity = (pitchVelocity * cos) * groundDistance + (pitchVelocity * sin) * Vector3.up;
-        
+
         return launchVelocity;
     }
-    
+
     private static bool TryGetPlaneEntryPoint(
         Vector3 prevCenter, Vector3 nowCenter,
         Vector3 planePointP0, Vector3 planeNormalN,
@@ -625,18 +643,19 @@ public class GameController : MonoBehaviour
             fraction01 = 0f;
             return false;
         }
+
         var n = planeNormalN.normalized;
 
         // Signed distances of the sphere center to the plane at prev/now.
         var sPrev = Vector3.Dot(prevCenter - planePointP0, n);
-        var sNow  = Vector3.Dot(nowCenter  - planePointP0, n);
+        var sNow = Vector3.Dot(nowCenter - planePointP0, n);
 
         // Choose what "counts" as crossing.
         var threshold = anyPartCountsBool ? -sphereRadius : 0f;
 
         // Did we cross the threshold this step? (allow either direction of travel)
         var a = sPrev - threshold;
-        var b = sNow  - threshold;
+        var b = sNow - threshold;
         var denom = sNow - sPrev;
         if ((a > 0f && b > 0f) || (a < 0f && b < 0f) || Mathf.Abs(denom) < 1e-6f)
         {
@@ -650,14 +669,15 @@ public class GameController : MonoBehaviour
         centerAtEntry = Vector3.Lerp(prevCenter, nowCenter, fraction01);
 
         // Contact point on the plane (the sphere's front-most point at first touch).
-        contactPointOnPlane = anyPartCountsBool ? centerAtEntry + n * sphereRadius
+        contactPointOnPlane = anyPartCountsBool
+            ? centerAtEntry + n * sphereRadius
             : centerAtEntry;
 
         return true;
     }
 
     #endregion
-    
+
     #region UI Handlers
 
     private void UpdatePitchClock(float timeLeft)
@@ -682,7 +702,7 @@ public class GameController : MonoBehaviour
     public void ShowPitches()
     {
         DestroyVisualBalls();
-        
+
         uiController.showingLevelPitches = true;
         levelModeBackButton.SetActive(true);
         uiController.DisableViews();
@@ -691,4 +711,24 @@ public class GameController : MonoBehaviour
     }
 
     #endregion
+
+    private void Update()
+    {
+        var touch = Touchscreen.current?.primaryTouch;
+
+        if (touch == null || !touch.press.wasPressedThisFrame) return;
+
+        var pos = touch.position.ReadValue();
+        var ray = cam.ScreenPointToRay(pos);
+
+        if (!Physics.Raycast(ray, out var hit, 25f, ballLayer)) return;
+
+        Debug.Log("Tapped on: " + hit.collider.gameObject.name);
+        hit.collider.GetComponent<Baseball>().ShowPitch();
+
+    }
 }
+
+
+        
+        
