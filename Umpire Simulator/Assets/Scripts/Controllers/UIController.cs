@@ -59,7 +59,8 @@ public class UIController : MonoBehaviour
         
         ShowGameView();
         
-        gameController.levelModeBackButton.SetActive(false);
+        if (gameController.levelModeBackButton)
+            gameController.levelModeBackButton.SetActive(false);
         
         if (nextLevelButton)
             DisableNextLevelButton();
