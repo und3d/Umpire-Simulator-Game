@@ -57,4 +57,9 @@ public class Baseball : MonoBehaviour
             yield return null;
         }
     }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
 }

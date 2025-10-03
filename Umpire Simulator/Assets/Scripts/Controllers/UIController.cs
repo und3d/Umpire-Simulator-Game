@@ -59,6 +59,8 @@ public class UIController : MonoBehaviour
         
         ShowGameView();
         
+        gameController.levelModeBackButton.SetActive(false);
+        
         if (nextLevelButton)
             DisableNextLevelButton();
         
@@ -85,13 +87,11 @@ public class UIController : MonoBehaviour
         }
         else if (pauseAction.WasPressedThisFrame() && showingLevelPitches)
         {
-            showingLevelPitches = false;
-            ShowGameOverView();
+            BackToGameOverView();
         }
 
         if ((gameController.isEndlessMode || gameController.isPracticeMode) && showingLastPitch && continueAction.WasPressedThisFrame())
         {
-            StopAllCoroutines();
             ShowGameView();
         }
     }
@@ -317,6 +317,30 @@ public class UIController : MonoBehaviour
     {
         buttonSound.Play();
         LevelLoader.Instance.AdvanceLevel(gameController.level);
+    }
+
+    public void ContinueGame()
+    {
+        buttonSound.Play();
+        ShowGameView();
+    }
+
+    public void BackToGameOverView()
+    {
+        gameController.DestroyVisualBalls();
+        
+        showingLevelPitches = false;
+        gameController.levelModeBackButton.SetActive(false);
+        gameController.cam.transform.position = gameController.originalCamTransform;
+        gameController.cam.transform.rotation = gameController.originalCamRotation;
+        gameController.StopAllCoroutines();
+        ShowGameOverView();
+    }
+
+    public void PauseGame()
+    {
+        buttonSound.Play();
+        ShowPauseMenu();
     }
     
     public void RestartGame()

@@ -16,6 +16,14 @@ public class MenuController : MonoBehaviour
     [SerializeField] private CanvasGroup settingsMenu;
     [SerializeField] private CanvasGroup controlsMenu;
     [SerializeField] private TMP_Text versionText;
+    [SerializeField] private TMP_Text titleText;
+    [SerializeField] private TMP_Text creatorText;
+    [SerializeField] private CanvasGroup selectedLevelMenu;
+    [SerializeField] private TMP_Text selectedLevelText;
+    [SerializeField] private TMP_Text pitchCountText;
+    [SerializeField] private TMP_Text levelCorrectForOneStarText;
+    [SerializeField] private TMP_Text levelCorrectForTwoStarsText;
+    [SerializeField] private TMP_Text levelCorrectForThreeStarsText;
 
     [SerializeField] private List<Button> levelSelectButtons;
     [SerializeField] private TMP_Text highscoreTextMenu;
@@ -32,6 +40,12 @@ public class MenuController : MonoBehaviour
     [SerializeField] private AudioClip songFour;
     [SerializeField] private AudioClip songFive;
     [SerializeField] private AudioClip songSix;
+
+    private int selectedLevel;
+    private int pitchCount;
+    private int levelCorrectForOneStar = -1;
+    private int levelCorrectForTwoStars = -1;
+    private int levelCorrectForThreeStars = -1;
     
     private void Awake()
     {
@@ -46,6 +60,9 @@ public class MenuController : MonoBehaviour
 
     private void DisableViews()
     {
+        titleText.enabled = true;
+        creatorText.enabled = true;
+        
         foreach (var view in viewList)
         {
             view.alpha = 0;
@@ -91,6 +108,8 @@ public class MenuController : MonoBehaviour
         buttonSound.Play();
         DisableViews();
         
+        titleText.enabled = false;
+        creatorText.enabled = false;
         controlsMenu.alpha = 1;
         controlsMenu.interactable = true;
         controlsMenu.blocksRaycasts = true;
@@ -113,6 +132,27 @@ public class MenuController : MonoBehaviour
         levelSelectionMenu.alpha = 1;
         levelSelectionMenu.interactable = true;
         levelSelectionMenu.blocksRaycasts = true;
+    }
+    
+    public void ShowLevel(int level)
+    {
+        selectedLevelMenu.alpha = 1;
+        selectedLevelMenu.interactable = true;
+        selectedLevelMenu.blocksRaycasts = true;
+
+        var levelParams = LevelLoader.Instance.GetLevelValues(level);
+        pitchCount = levelParams.pitchAmount;
+        levelCorrectForOneStar = levelParams.correctForOneStar;
+        levelCorrectForTwoStars = levelParams.correctForTwoStars;
+        levelCorrectForThreeStars = levelParams.correctForThreeStars;
+        
+        selectedLevelText.text = $"Level {level}";
+        pitchCountText.text = $"{pitchCount}";
+        levelCorrectForOneStarText.text = $"{levelCorrectForOneStar}";
+        levelCorrectForTwoStarsText.text = $"{levelCorrectForTwoStars}";
+        levelCorrectForThreeStarsText.text = $"{levelCorrectForThreeStars}";
+        
+        selectedLevel = level;
     }
 
     private void PlaySong()
@@ -172,7 +212,13 @@ public class MenuController : MonoBehaviour
     public void SetLevel(int level)
     {
         buttonSound.Play();
-        LevelLoader.Instance.SetLevel(level);
+        ShowLevel(level);
+        
+    }
+
+    public void PlayLevel()
+    {
+        LevelLoader.Instance.SetLevel(selectedLevel);
     }
 
     public void GoToEndlessMode()

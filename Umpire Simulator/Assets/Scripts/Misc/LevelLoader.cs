@@ -20,9 +20,9 @@ public sealed class LevelLoader : MonoBehaviour
 
     private int levelToLoad = -1;
     private int levelPitchAmount = -1;
-    private int levelcorrectForOneStar = -1;
-    private int levelcorrectForTwoStars = -1;
-    private int levelcorrectForThreeStars = -1;
+    private int levelCorrectForOneStar = -1;
+    private int levelCorrectForTwoStars = -1;
+    private int levelCorrectForThreeStars = -1;
     private MenuController menuController;
     public float musicVolume = 1f;
     public float sfxVolume = 1f;
@@ -144,18 +144,18 @@ public sealed class LevelLoader : MonoBehaviour
     {
         levelToLoad = level;
         levelPitchAmount = pitchAmount;
-        levelcorrectForOneStar = correctForOneStar;
-        levelcorrectForTwoStars = correctForTwoStars;
-        levelcorrectForThreeStars = correctForThreeStars;
+        levelCorrectForOneStar = correctForOneStar;
+        levelCorrectForTwoStars = correctForTwoStars;
+        levelCorrectForThreeStars = correctForThreeStars;
     }
 
     public void LoadLevel(out int level, out int pitchAmount, out int correctForOneStar, out int correctForTwoStars, out int correctForThreeStars)
     {
         level = levelToLoad;
         pitchAmount = levelPitchAmount;
-        correctForOneStar = levelcorrectForOneStar;
-        correctForTwoStars = levelcorrectForTwoStars;
-        correctForThreeStars = levelcorrectForThreeStars;
+        correctForOneStar = levelCorrectForOneStar;
+        correctForTwoStars = levelCorrectForTwoStars;
+        correctForThreeStars = levelCorrectForThreeStars;
     }
     
     public void UnlockLevel(int level)
@@ -203,7 +203,7 @@ public sealed class LevelLoader : MonoBehaviour
     {
         var levelParams = levelDatabase.levelContainer[level - 1];
         
-        LevelLoader.Instance.SetLevel(
+        Instance.SetLevel(
             levelParams.level, 
             levelParams.pitchAmount, 
             levelParams.correctForOneStar, 
@@ -211,6 +211,11 @@ public sealed class LevelLoader : MonoBehaviour
             levelParams.correctForThreeStars);
         
         SceneManager.LoadScene("LevelMode");
+    }
+
+    public LevelParams GetLevelValues(int level)
+    {
+        return levelDatabase.levelContainer[level - 1];
     }
 
     public void SetVersionText()

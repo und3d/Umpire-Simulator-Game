@@ -21,6 +21,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private BoxCollider strikezoneCollider;
     [SerializeField] private UIController uiController;
     [SerializeField] private TMP_Text versionText;
+    public GameObject levelModeBackButton;
     
     [Header("Gamemode Settings")]
     public bool isPracticeMode;
@@ -422,6 +423,12 @@ public class GameController : MonoBehaviour
 
     #region Helpers
 
+    public void DestroyVisualBalls()
+    {
+        foreach (var ball in visualPitches)
+            Destroy(ball);
+    }
+    
     private void PlayStrikeCall()
     {
         var callID = Random.Range(0, 4);
@@ -673,10 +680,10 @@ public class GameController : MonoBehaviour
 
     public void ShowPitches()
     {
-        foreach (var ball in visualPitches)
-            Destroy(ball);
+        DestroyVisualBalls();
         
         uiController.showingLevelPitches = true;
+        levelModeBackButton.SetActive(true);
         uiController.DisableViews();
         strikezone.rotation = Quaternion.Euler(0f, 180f, 0f);
         StartCoroutine(ShowPitchLocations());

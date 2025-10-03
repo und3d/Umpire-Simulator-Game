@@ -47,33 +47,54 @@ public class SaveUtilities : MonoBehaviour
         var filePath = GetSavePath();
         var dir = GetSaveDirectory();
 
+        // Ensure directory exists so opening it never fails
+        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
 #if UNITY_EDITOR
         UnityEditor.EditorUtility.RevealInFinder(File.Exists(filePath) ? filePath : dir);
 #else
-        try
-        {
+    try
+    {
 #if UNITY_STANDALONE_WIN
-            if (File.Exists(filePath))
-                Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{filePath}\"") { UseShellExecute = true });
-            else
-                Process.Start(new ProcessStartInfo("explorer.exe", $"\"{dir}\"") { UseShellExecute = true });
+        // Normalize to Windows-style backslashes for explorer
+        string winFile = filePath.Replace('/', '\\');
+        string winDir  = dir.Replace('/', '\\');
+
+        if (File.Exists(winFile))
+        {
+            // Select the file
+            Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{winFile}\"")
+            {
+                UseShellExecute = true
+            });
+        }
+        else
+        {
+            // Open folder
+            Process.Start(new ProcessStartInfo("explorer.exe", $"\"{winDir}\"")
+            {
+                UseShellExecute = true
+            });
+        }
 
 #elif UNITY_STANDALONE_OSX
-            if (File.Exists(filePath))
-                Process.Start(new ProcessStartInfo("open", $"-R \"{filePath}\"") { UseShellExecute = true });
-            else
-                Process.Start(new ProcessStartInfo("open", $"\"{dir}\"") { UseShellExecute = true });
+        if (File.Exists(filePath))
+            Process.Start(new ProcessStartInfo("open", $"-R \"{filePath}\"") { UseShellExecute = true });
+        else
+            Process.Start(new ProcessStartInfo("open", $"\"{dir}\"") { UseShellExecute = true });
 
 #elif UNITY_STANDALONE_LINUX
-            Process.Start(new ProcessStartInfo("xdg-open", $"\"{dir}\"") { UseShellExecute = true });
+        // xdg-open cannot “select a file”; it only opens the folder
+        Process.Start(new ProcessStartInfo("xdg-open", $"\"{dir}\"") { UseShellExecute = true });
 #else
-            Debug.Log($"Save location: {dir}");
-#endif
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Failed to open save location: {e.Message}\nPath: {dir}");
-        }
+        Debug.Log($"Save location: {dir}");
 #endif
     }
+    catch (System.Exception e)
+    {
+        Debug.LogError($"Failed to open save location: {e.Message}\nPath: {dir}");
+    }
+#endif
+    }
+
 }
