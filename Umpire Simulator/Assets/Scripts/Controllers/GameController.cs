@@ -371,7 +371,15 @@ public class GameController : MonoBehaviour
         pitchLocationToShow = lastPitchLocation;
         uiController.HideGameButtons();
         uiController.gameButtonsActive = false;
+        
         ArmForNextPitch();
+        
+        if (isPracticeMode)
+        {
+            Time.timeScale = 0;
+            uiController.ShowLastPitchLocation();
+            PauseAudio();
+        }
     }
 
     public void CallBall()
@@ -397,10 +405,17 @@ public class GameController : MonoBehaviour
             }
         }
         
+        ArmForNextPitch();
+        
         pitchLocationToShow = lastPitchLocation;
         uiController.HideGameButtons();
         uiController.gameButtonsActive = false;
-        ArmForNextPitch();
+        if (isPracticeMode)
+        {
+            Time.timeScale = 0;
+            uiController.ShowLastPitchLocation();
+            PauseAudio();
+        }
     }
 
     public void PauseAudio()
